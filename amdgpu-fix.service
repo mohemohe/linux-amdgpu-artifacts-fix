@@ -1,0 +1,9 @@
+[Unit]
+Description=fix amdgpu vram clock
+
+[Service]
+Type=simple
+ExecStart=/opt/amdgpu-fix/amdgpu-fix
+
+[Install]
+WantedBy=multi-user.target

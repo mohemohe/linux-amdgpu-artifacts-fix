@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [[ "${EUID:-${UID}}" != "0" ]]; then
+  echo 'This script requires root privileges'
+  exit 1
+fi
+
+TARGET_MCLK="$(rocm-smi --setmclk 9999 2>&1 | grep "Max clock level is" | head -1 | sed -r 's|^.*Max clock level is (.*)$|\1|')"
+
+while : ; do
+  CULLENT_MCLK="$(rocm-smi -c 2>&1 | grep "mclk clock level" | head -1 | sed -r 's|^.*mclk clock level: (.*) .*$|\1|')"
+  if [[ "${CULLENT_MCLK}" != "${TARGET_MCLK}" ]]; then
+    rocm-smi --setmclk "${TARGET_MCLK}"
+  fi
+  sleep 2
+done
